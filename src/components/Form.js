@@ -44,7 +44,7 @@ class Form extends React.Component {
           />
         </label>
         <br />
-        <label htmlFor="atributo">
+        <label htmlFor="atributo1">
           Atributo 1:
           <input
             type="number"
@@ -56,7 +56,7 @@ class Form extends React.Component {
           />
         </label>
         <br />
-        <label htmlFor="atributo">
+        <label htmlFor="atributo2">
           Atributo 2:
           <input
             type="number"
@@ -68,7 +68,7 @@ class Form extends React.Component {
           />
         </label>
         <br />
-        <label htmlFor="atributo">
+        <label htmlFor="atributo3">
           Atributo 3:
           <input
             type="number"

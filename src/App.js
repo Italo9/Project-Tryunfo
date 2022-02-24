@@ -10,7 +10,8 @@ const INITIAL_STATE = {
   cardAttr3: '0',
   cardImage: '',
   cardRare: '',
-  cardTrunfo: '',
+  cardTrunfo: false,
+  isSaveButtonDisabled: true,
 };
 class App extends React.Component {
   constructor(props) {
@@ -18,17 +19,50 @@ class App extends React.Component {
     this.state = INITIAL_STATE;
     this.onInputChange = this.onInputChange.bind(this);
     this.updateState = this.updateState.bind(this);
+    this.validarChaveState = this.validarValueDaChaveState.bind(this);
   }
 
   onInputChange = (event) => {
     const { name, value } = event.target;
     this.updateState(name, value);
+    this.setState({ [name]: value }, () => this.validarValueDaChaveState());
   }
 
   updateState(name, value) {
     this.setState({
       [name]: value,
     });
+  }
+
+  validarValueDaChaveState() {
+    const { cardName,
+      cardDescription,
+      cardAttr1,
+      cardAttr2,
+      cardAttr3,
+      cardImage,
+      cardRare } = this.state;
+    const noventa = 90;
+    const dozentoseDez = 210;
+    if (cardName === ''
+    || cardDescription === ''
+    || cardAttr1 === ''
+    || cardAttr2 === ''
+    || cardAttr3 === ''
+    || cardImage === ''
+    || cardRare === ''
+    || parseFloat(cardAttr1) > noventa
+    || parseFloat(cardAttr1) < 0
+    || parseFloat(cardAttr2) > noventa
+    || parseFloat(cardAttr2) < 0
+    || parseFloat(cardAttr3) > noventa
+    || parseFloat(cardAttr3) < 0
+    || parseFloat(cardAttr1)
+     + parseFloat(cardAttr2) + parseFloat(cardAttr3) > dozentoseDez) {
+      this.setState({ isSaveButtonDisabled: true });
+    } else {
+      this.setState({ isSaveButtonDisabled: false });
+    }
   }
 
   render() {
@@ -41,13 +75,25 @@ class App extends React.Component {
       cardImage,
       cardRare,
       cardTrunfo,
+      isSaveButtonDisabled,
     } = this.state;
     return (
       <div>
         <div>
           <h1>Tryunfo</h1>
         </div>
-        <Form onInputChange={ this.onInputChange } />
+        <Form
+          onInputChange={ this.onInputChange }
+          cardName={ cardName }
+          cardDescription={ cardDescription }
+          cardAttr1={ cardAttr1 }
+          cardAttr2={ cardAttr2 }
+          cardAttr3={ cardAttr3 }
+          cardImage={ cardImage }
+          cardRare={ cardRare }
+          cardTrunfo={ cardTrunfo }
+          isSaveButtonDisabled={ isSaveButtonDisabled }
+        />
         <Card
           cardName={ cardName }
           cardDescription={ cardDescription }
