@@ -2,6 +2,8 @@ import React from 'react';
 import Form from './components/Form';
 import Card from './components/Card';
 
+const CARTAS_DO_BARALHO = [];
+
 const INITIAL_STATE = {
   cardName: '',
   cardDescription: '',
@@ -12,7 +14,9 @@ const INITIAL_STATE = {
   cardRare: '',
   cardTrunfo: false,
   isSaveButtonDisabled: true,
+  cartas: CARTAS_DO_BARALHO,
 };
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -20,12 +24,43 @@ class App extends React.Component {
     this.onInputChange = this.onInputChange.bind(this);
     this.updateState = this.updateState.bind(this);
     this.validarChaveState = this.validarValueDaChaveState.bind(this);
+    this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
   }
 
   onInputChange = (event) => {
     const { name, value } = event.target;
     this.updateState(name, value);
     this.setState({ [name]: value }, () => this.validarValueDaChaveState());
+  }
+
+  onSaveButtonClick(e) {
+    console.log();
+    e.preventDefault();
+    this.setState(
+      (estadoAnterior) => (
+        { cartas: [...estadoAnterior.cartas, {
+          cardName: estadoAnterior.cardName,
+          cardDescription: estadoAnterior.cardDescription,
+          cardAttr1: estadoAnterior.cardAttr1,
+          cardAttr2: estadoAnterior.cardAttr2,
+          cardAttr3: estadoAnterior.cardAttr3,
+          cardImage: estadoAnterior.cardImage,
+          cardRare: estadoAnterior.cardRare,
+        }] }),
+    );
+    console.log(this.state);
+    this.setState({
+      cardName: '',
+      cardDescription: '',
+      cardAttr1: '0',
+      cardAttr2: '0',
+      cardAttr3: '0',
+      cardImage: '',
+      cardRare: '',
+      cardTrunfo: false,
+      isSaveButtonDisabled: true,
+    });
+    console.log(this.state);
   }
 
   updateState(name, value) {
@@ -93,6 +128,7 @@ class App extends React.Component {
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
           isSaveButtonDisabled={ isSaveButtonDisabled }
+          onSaveButtonClick={ this.onSaveButtonClick }
         />
         <Card
           cardName={ cardName }
