@@ -15,6 +15,7 @@ const INITIAL_STATE = {
   cardTrunfo: false,
   isSaveButtonDisabled: true,
   cartas: CARTAS_DO_BARALHO,
+  hasTrunfo: false,
 };
 
 class App extends React.Component {
@@ -25,16 +26,20 @@ class App extends React.Component {
     this.updateState = this.updateState.bind(this);
     this.validarChaveState = this.validarValueDaChaveState.bind(this);
     this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
+    this.validaCheked = this.validaCheked.bind(this);
   }
 
   onInputChange = (event) => {
-    const { name, value } = event.target;
+    const { name } = event.target;
+    const value = (event.target.type === 'checkbox')
+      ? event.target.checked : event.target.value;
     this.updateState(name, value);
+    // console.log(value);
     this.setState({ [name]: value }, () => this.validarValueDaChaveState());
   }
 
   onSaveButtonClick(e) {
-    console.log();
+    // console.log();
     e.preventDefault();
     this.setState(
       (estadoAnterior) => (
@@ -46,9 +51,10 @@ class App extends React.Component {
           cardAttr3: estadoAnterior.cardAttr3,
           cardImage: estadoAnterior.cardImage,
           cardRare: estadoAnterior.cardRare,
+          cardTrunfo: estadoAnterior.cardTrunfo,
         }] }),
     );
-    console.log(this.state);
+    // console.log(this.state);
     this.setState({
       cardName: '',
       cardDescription: '',
@@ -57,16 +63,25 @@ class App extends React.Component {
       cardAttr3: '0',
       cardImage: '',
       cardRare: '',
-      cardTrunfo: false,
       isSaveButtonDisabled: true,
-    });
-    console.log(this.state);
+    }, () => this.validaCheked());
+    // console.log(this.state);
   }
 
   updateState(name, value) {
     this.setState({
       [name]: value,
     });
+  }
+
+  validaCheked() {
+    const {
+      cartas,
+    } = this.state;
+    console.log(cartas.some((carta) => carta.cardTrunfo === true));
+    if (cartas.some((carta) => carta.cardTrunfo === true)) {
+      this.setState({ hasTrunfo: true });
+    } else (this.setState({ hasTrunfo: false }));
   }
 
   validarValueDaChaveState() {
@@ -111,6 +126,7 @@ class App extends React.Component {
       cardRare,
       cardTrunfo,
       isSaveButtonDisabled,
+      hasTrunfo,
     } = this.state;
     return (
       <div>
@@ -129,6 +145,7 @@ class App extends React.Component {
           cardTrunfo={ cardTrunfo }
           isSaveButtonDisabled={ isSaveButtonDisabled }
           onSaveButtonClick={ this.onSaveButtonClick }
+          hasTrunfo={ hasTrunfo }
         />
         <Card
           cardName={ cardName }
