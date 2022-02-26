@@ -27,6 +27,7 @@ class App extends React.Component {
     this.validarChaveState = this.validarValueDaChaveState.bind(this);
     this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
     this.validaCheked = this.validaCheked.bind(this);
+    this.removeCarta = this.removeCarta.bind(this);
   }
 
   onInputChange = (event) => {
@@ -115,6 +116,13 @@ class App extends React.Component {
     }
   }
 
+  removeCarta(cardName) {
+    const { cartas } = this.state;
+    this.setState({
+      cartas: cartas.filter((carta) => carta.cardName !== cardName) },
+    () => this.validaCheked());
+  }
+
   render() {
     const {
       cardName,
@@ -172,6 +180,14 @@ class App extends React.Component {
                 cardRare={ carta.cardRare }
                 cardTrunfo={ carta.cardTrunfo }
               />
+              <button
+                type="button"
+                data-testid="delete-button"
+                onClick={ () => this.removeCarta(carta.cardName) }
+              >
+                Excluir
+
+              </button>
             </div>))}
         </section>
       </div>
