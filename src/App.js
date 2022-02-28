@@ -17,6 +17,7 @@ const INITIAL_STATE = {
   cartas: CARTAS_DO_BARALHO,
   hasTrunfo: false,
   searchInput: '',
+  searchSelect: '',
 };
 
 class App extends React.Component {
@@ -29,11 +30,12 @@ class App extends React.Component {
     this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
     this.validaCheked = this.validaCheked.bind(this);
     this.removeCarta = this.removeCarta.bind(this);
-    this.filtroNomeCarta = this.filtroNomeCarta.bind(this);
+    this.filtroCarta = this.filtroCarta.bind(this);
+    // this.filtroRaridadeCarta = this.filtroRaridadeCarta.bind(this);
   }
 
   onInputChange = (event) => {
-    console.log(event.target);
+    // console.log(event.target);
     const { name } = event.target;
     const value = (event.target.type === 'checkbox')
       ? event.target.checked : event.target.value;
@@ -72,10 +74,17 @@ class App extends React.Component {
     // console.log(this.state);
   }
 
-  filtroNomeCarta(event) {
+  filtroCarta(event) {
     // console.log(event);
-    const { target: { value } } = event;
+    const { target: { value, type } } = event;
     // console.log({ target: { value } });
+    // if (value === 'todas'
+    //  || value === 'normal' || value === 'raro' || value === 'muito raro') {
+    //   this.setState({ searchSelect: value });
+    // }
+    if (type === 'select-one') {
+      this.setState({ searchSelect: value });
+    }
     this.setState({ searchInput: value });
     // console.log(value);
   }
@@ -148,6 +157,7 @@ class App extends React.Component {
       hasTrunfo,
       cartas,
       searchInput,
+      searchSelect,
     } = this.state;
     return (
       <div>
@@ -182,12 +192,29 @@ class App extends React.Component {
           type="text"
           placeholder="Buscar cartas"
           data-testid="name-filter"
-          onChange={ this.filtroNomeCarta }
+          onChange={ this.filtroCarta }
           defaultValue={ searchInput }
         />
+        <br />
+        <label htmlFor="rare-filter">
+          Filtro por raridade da carta:
+          <select
+            name="rare-filter"
+            data-testid="rare-filter"
+            id="rare-filter"
+            value={ searchSelect }
+            onChange={ this.filtroCarta }
+          >
+            <option>todas</option>
+            <option>normal</option>
+            <option>raro</option>
+            <option>muito raro</option>
+          </select>
+        </label>
         <section>
           {cartas
-            .filter((carta) => carta.cardName.includes(searchInput))
+            .filter((carta) => carta.cardName.includes(searchInput)
+            || carta.cardRare === searchSelect || searchSelect === 'todas')
             .map((carta) => (
               <div className="" key={ carta.cardName }>
                 <Card
@@ -215,5 +242,4 @@ class App extends React.Component {
     );
   }
 }
-
 export default App;
