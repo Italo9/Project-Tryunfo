@@ -16,6 +16,7 @@ const INITIAL_STATE = {
   isSaveButtonDisabled: true,
   cartas: CARTAS_DO_BARALHO,
   hasTrunfo: false,
+  searchInput: '',
 };
 
 class App extends React.Component {
@@ -28,9 +29,11 @@ class App extends React.Component {
     this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
     this.validaCheked = this.validaCheked.bind(this);
     this.removeCarta = this.removeCarta.bind(this);
+    this.filtroNomeCarta = this.filtroNomeCarta.bind(this);
   }
 
   onInputChange = (event) => {
+    console.log(event.target);
     const { name } = event.target;
     const value = (event.target.type === 'checkbox')
       ? event.target.checked : event.target.value;
@@ -67,6 +70,14 @@ class App extends React.Component {
       isSaveButtonDisabled: true,
     }, () => this.validaCheked());
     // console.log(this.state);
+  }
+
+  filtroNomeCarta(event) {
+    // console.log(event);
+    const { target: { value } } = event;
+    // console.log({ target: { value } });
+    this.setState({ searchInput: value });
+    // console.log(value);
   }
 
   updateState(name, value) {
@@ -136,6 +147,7 @@ class App extends React.Component {
       isSaveButtonDisabled,
       hasTrunfo,
       cartas,
+      searchInput,
     } = this.state;
     return (
       <div>
@@ -166,29 +178,38 @@ class App extends React.Component {
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
         />
+        <input
+          type="text"
+          placeholder="Buscar cartas"
+          data-testid="name-filter"
+          onChange={ this.filtroNomeCarta }
+          defaultValue={ searchInput }
+        />
         <section>
-          {cartas.map((carta) => (
-            <div className="" key={ carta.cardName }>
-              <Card
-                key={ carta.cardName }
-                cardName={ carta.cardName }
-                cardDescription={ carta.cardDescription }
-                cardAttr1={ carta.cardAttr1 }
-                cardAttr2={ carta.cardAttr2 }
-                cardAttr3={ carta.cardAttr3 }
-                cardImage={ carta.cardImage }
-                cardRare={ carta.cardRare }
-                cardTrunfo={ carta.cardTrunfo }
-              />
-              <button
-                type="button"
-                data-testid="delete-button"
-                onClick={ () => this.removeCarta(carta.cardName) }
-              >
-                Excluir
+          {cartas
+            .filter((carta) => carta.cardName.includes(searchInput))
+            .map((carta) => (
+              <div className="" key={ carta.cardName }>
+                <Card
+                  key={ carta.cardName }
+                  cardName={ carta.cardName }
+                  cardDescription={ carta.cardDescription }
+                  cardAttr1={ carta.cardAttr1 }
+                  cardAttr2={ carta.cardAttr2 }
+                  cardAttr3={ carta.cardAttr3 }
+                  cardImage={ carta.cardImage }
+                  cardRare={ carta.cardRare }
+                  cardTrunfo={ carta.cardTrunfo }
+                />
+                <button
+                  type="button"
+                  data-testid="delete-button"
+                  onClick={ () => this.removeCarta(carta.cardName) }
+                >
+                  Excluir
 
-              </button>
-            </div>))}
+                </button>
+              </div>))}
         </section>
       </div>
     );
