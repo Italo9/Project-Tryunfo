@@ -25,7 +25,6 @@ class Form extends React.Component {
             type="text"
             name="cardName"
             id="cardName"
-            MissiFonCard
             placeholder="Seu nome"
             value={ cardName }
             onChange={ onInputChange }

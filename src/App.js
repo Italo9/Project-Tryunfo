@@ -18,6 +18,7 @@ const INITIAL_STATE = {
   hasTrunfo: false,
   searchInput: '',
   searchSelect: '',
+  cardTrunfoFiltro: false,
 };
 
 class App extends React.Component {
@@ -31,21 +32,17 @@ class App extends React.Component {
     this.validaCheked = this.validaCheked.bind(this);
     this.removeCarta = this.removeCarta.bind(this);
     this.filtroCarta = this.filtroCarta.bind(this);
-    // this.filtroRaridadeCarta = this.filtroRaridadeCarta.bind(this);
   }
 
   onInputChange = (event) => {
-    // console.log(event.target);
     const { name } = event.target;
     const value = (event.target.type === 'checkbox')
       ? event.target.checked : event.target.value;
     this.updateState(name, value);
-    // console.log(value);
     this.setState({ [name]: value }, () => this.validarValueDaChaveState());
   }
 
   onSaveButtonClick(e) {
-    // console.log();
     e.preventDefault();
     this.setState(
       (estadoAnterior) => (
@@ -60,7 +57,6 @@ class App extends React.Component {
           cardTrunfo: estadoAnterior.cardTrunfo,
         }] }),
     );
-    // console.log(this.state);
     this.setState({
       cardName: '',
       cardDescription: '',
@@ -70,23 +66,16 @@ class App extends React.Component {
       cardImage: '',
       cardRare: '',
       isSaveButtonDisabled: true,
+      cardTrunfo: false,
     }, () => this.validaCheked());
-    // console.log(this.state);
   }
 
   filtroCarta(event) {
-    // console.log(event);
     const { target: { value, type } } = event;
-    // console.log({ target: { value } });
-    // if (value === 'todas'
-    //  || value === 'normal' || value === 'raro' || value === 'muito raro') {
-    //   this.setState({ searchSelect: value });
-    // }
     if (type === 'select-one') {
       this.setState({ searchSelect: value });
     }
     this.setState({ searchInput: value });
-    // console.log(value);
   }
 
   updateState(name, value) {
@@ -99,7 +88,6 @@ class App extends React.Component {
     const {
       cartas,
     } = this.state;
-    // console.log(cartas.some((carta) => carta.cardTrunfo === true));
     if (cartas.some((carta) => carta.cardTrunfo === true)) {
       this.setState({ hasTrunfo: true });
     } else (this.setState({ hasTrunfo: false }));
@@ -158,6 +146,7 @@ class App extends React.Component {
       cartas,
       searchInput,
       searchSelect,
+      cardTrunfoFiltro,
     } = this.state;
     return (
       <div>
@@ -194,8 +183,8 @@ class App extends React.Component {
           data-testid="name-filter"
           onChange={ this.filtroCarta }
           defaultValue={ searchInput }
+          disabled={ cardTrunfoFiltro }
         />
-        <br />
         <label htmlFor="rare-filter">
           Filtro por raridade da carta:
           <select
@@ -204,6 +193,7 @@ class App extends React.Component {
             id="rare-filter"
             value={ searchSelect }
             onChange={ this.filtroCarta }
+            disabled={ cardTrunfoFiltro }
           >
             <option>todas</option>
             <option>normal</option>
@@ -211,11 +201,25 @@ class App extends React.Component {
             <option>muito raro</option>
           </select>
         </label>
+        <br />
+        <label htmlFor="cardTrunfoFiltro">
+          Super Trunfo:
+          <input
+            type="checkbox"
+            name="cardTrunfoFiltro"
+            data-testid="trunfo-filter"
+            id="cardTrunfoFiltro"
+            checked={ cardTrunfoFiltro }
+            onChange={ (this.onInputChange) }
+          />
+        </label>
         <section>
-          {cartas
-            .filter((carta) => carta.cardName.includes(searchInput)
-            || carta.cardRare === searchSelect || searchSelect === 'todas')
-            .map((carta) => (
+          {(() => {
+            const cartaEncontrada = (cardTrunfoFiltro) ? cartas
+              .filter((carta) => carta.cardTrunfo === true)
+              : cartas.filter((carta) => carta.cardName.includes(searchInput)
+            || carta.cardRare === searchSelect || searchSelect === 'todas');
+            return cartaEncontrada.map((carta) => (
               <div className="" key={ carta.cardName }>
                 <Card
                   key={ carta.cardName }
@@ -234,9 +238,9 @@ class App extends React.Component {
                   onClick={ () => this.removeCarta(carta.cardName) }
                 >
                   Excluir
-
                 </button>
-              </div>))}
+              </div>));
+          })()}
         </section>
       </div>
     );
